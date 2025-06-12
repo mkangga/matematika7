@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Platform Belajar Matematika Kelas 7</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f0f4f8;
+        }
+        .main-container {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 2rem;
+        }
+        @media (max-width: 1024px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+            #sidebar {
+                position: fixed;
+                top: 0;
+                left: -100%;
+                width: 280px;
+                height: 100%;
+                transition: left 0.3s ease-in-out;
+                z-index: 50;
+                overflow-y: auto;
+            }
+            #sidebar.open {
+                left: 0;
+            }
+            #overlay {
+                display: none;
+            }
+             #sidebar.open + #overlay {
+                display: block;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0,0,0,0.5);
+                z-index: 40;
+            }
+        }
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            color: #475569;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        .nav-link:hover {
+            background-color: #eef2ff;
+            color: #4338ca;
+        }
+        .nav-link.active {
+            background-color: #4f46e5;
+            color: white;
+            box-shadow: 0 4px 14px 0 rgba(79, 70, 229, 0.3);
+        }
+        .nav-link i {
+            width: 20px;
+            margin-right: 0.75rem;
+        }
+        .content-section > h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        .content-section > p, .content-section > ul {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        .quiz-option {
+            border: 2px solid #e5e7eb;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .quiz-option:hover {
+            border-color: #4f46e5;
+            transform: translateY(-2px);
+        }
+        .correct {
+            background-color: #ecfdf5 !important;
+            border-color: #10b981 !important;
+        }
+        .incorrect {
+            background-color: #fff1f2 !important;
+            border-color: #f43f5e !important;
+        }
+        .explanation-box {
+            background-color: #eef2ff;
+            border-left: 4px solid #4f46e5;
+            padding: 1rem;
+            margin-top: 1.5rem;
+        }
+    </style>
+</head>
+<body class="text-slate-700">
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <header class="flex justify-between items-center mb-8">
+            <div class="flex items-center space-x-3">
+                <div class="bg-indigo-600 p-2 rounded-lg">
+                    <i class="fa-solid fa-calculator text-white text-xl"></i>
+                </div>
+                <h1 class="text-2xl font-extrabold text-slate-900">Platform Belajar Matematika</h1>
+            </div>
+            <button id="menu-button" class="lg:hidden p-2 rounded-md bg-white shadow-sm">
+                <i class="fa-solid fa-bars text-xl text-slate-600"></i>
+            </button>
+        </header>
+
+        <div class="main-container">
+            <!-- Sidebar -->
+            <aside id="sidebar" class="bg-white p-6 rounded-2xl shadow-lg flex-shrink-0 h-fit">
+                <h2 class="text-sm font-bold uppercase text-slate-500 mb-4">Daftar Bab</h2>
+                <nav class="space-y-2">
+                    <a href="#" onclick="showContent('bab1')" class="nav-link"><i class="fa-solid fa-hashtag"></i>Bab 1: Bilangan Bulat</a>
+                    <a href="#" onclick="showContent('bab2')" class="nav-link"><i class="fa-solid fa-divide"></i>Bab 2: Bilangan Rasional</a>
+                    <a href="#" onclick="showContent('bab3')" class="nav-link"><i class="fa-solid fa-percent"></i>Bab 3: Rasio</a>
+                    <a href="#" onclick="showContent('bab4')" class="nav-link"><i class="fa-solid fa-superscript"></i>Bab 4: Bentuk Aljabar</a>
+                    <a href="#" onclick="showContent('bab5')" class="nav-link"><i class="fa-solid fa-draw-polygon"></i>Bab 5: Kesebangunan</a>
+                    <a href="#" onclick="showContent('bab6')" class="nav-link"><i class="fa-solid fa-chart-pie"></i>Bab 6: Data dan Diagram</a>
+                </nav>
+                 <hr class="my-6">
+                <a href="#" onclick="showContent('kuis')" class="w-full nav-link bg-indigo-100 hover:bg-indigo-200 text-indigo-700"><i class="fa-solid fa-pen-to-square"></i>Mulai Kuis Interaktif</a>
+            </aside>
+            <div id="overlay" onclick="toggleMenu()"></div>
+
+            <!-- Main Content -->
+            <main id="content-area" class="bg-white p-8 rounded-2xl shadow-lg">
+                <!-- Content will be injected here -->
+            </main>
+        </div>
+    </div>
+
+    <script>
+        const contentData = {
+            'bab1': `
+                <div class="animate-fade-in">
+                    <h2 class="text-3xl font-bold mb-6 text-slate-800">Bab 1: Bilangan Bulat</h2>
+                    <div class="space-y-6">
+                        <div class="content-section">
+                            <h3>A. Pengertian Bilangan Bulat</h3>
+                            <p>Bilangan bulat adalah himpunan bilangan yang mencakup bilangan cacah \\((0, 1, 2, ...)\\) beserta bentuk negatifnya \\((-1, -2, -3, ...)\\). Bilangan ini dapat divisualisasikan pada garis bilangan, di mana bilangan positif berada di kanan nol dan bilangan negatif di kiri.</p>
+                        </div>
+                        <div class="content-section">
+                            <h3>B. Operasi Hitung Bilangan Bulat</h3>
+                            <p>Aturan dasar operasi hitung pada bilangan bulat adalah sebagai berikut:</p>
+                            <ul>
+                                <li><b>Penjumlahan:</b> \\(a + (-b) = a - b\\)</li>
+                                <li><b>Pengurangan:</b> \\(a - (-b) = a + b\\)</li>
+                                <li><b>Perkalian & Pembagian:</b>
+                                    <ul class="list-disc list-inside ml-4">
+                                        <li>Positif \\(\\times\\) Positif \\(\\rightarrow\\) Positif</li>
+                                        <li>Positif \\(\\times\\) Negatif \\(\\rightarrow\\) Negatif</li>
+                                        <li>Negatif \\(\\times\\) Negatif \\(\\rightarrow\\) Positif</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="content-section">
+                            <h3>C. Faktor, FPB, dan KPK</h3>
+                            <p><b>Faktor Persekutuan Terbesar (FPB)</b> adalah faktor terbesar yang sama dari dua bilangan atau lebih. <b>Kelipatan Persekutuan Terkecil (KPK)</b> adalah kelipatan terkecil yang sama dari dua bilangan atau lebih. Keduanya dapat dicari menggunakan faktorisasi prima.</p>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-lg">
+                            <h4 class="font-bold text-lg mb-2 text-slate-700">Contoh Soal</h4>
+                            <p class="font-medium">Suhu udara di kota A adalah \\(-8^\\circ\\text{C}\\), sedangkan di kota B adalah \\(15^\\circ\\text{C}\\). Berapa selisih suhu kedua kota tersebut?</p>
+                            <details class="mt-2">
+                                <summary class="cursor-pointer text-sm font-semibold text-indigo-600">Lihat Pembahasan</summary>
+                                <div class="mt-2 p-3 bg-indigo-50 rounded-md text-sm">
+                                    <p><b>Pembahasan:</b> Selisih suhu dihitung dengan mengurangi suhu yang lebih tinggi dengan suhu yang lebih rendah.</p>
+                                    <p class="mt-2">\\(15 - (-8) = 15 + 8 = 23\\)</p>
+                                    <p>Jadi, selisih suhunya adalah \\(23^\\circ\\text{C}\\).</p>
+                                </div>
+                            </details>
+                        </div>
+                    </div>
+                </div>
+            `,
+            'bab2': `
+                <div class="animate-fade-in">
+                    <h2 class="text-3xl font-bold mb-6 text-slate-800">Bab 2: Bilangan Rasional</h2>
+                    <div class="space-y-6">
+                        <div class="content-section">
+                            <h3>A. Pengertian Bilangan Rasional</h3>
+                            <p>Bilangan rasional adalah bilangan apa pun yang dapat dinyatakan dalam bentuk pecahan \\(\\frac{a}{b}\\), di mana \\(a\\) dan \\(b\\) adalah bilangan bulat, dan \\(b \\neq 0\\). Ini termasuk bilangan bulat, pecahan, dan desimal (yang berhenti atau berulang).</p>
+                        </div>
+                        <div class="content-section">
+                            <h3>B. Operasi Hitung Bilangan Rasional</h3>
+                            <p>Operasi pada bilangan rasional dalam bentuk pecahan memerlukan beberapa aturan:</p>
+                            <ul>
+                                <li><b>Penjumlahan/Pengurangan:</b> Samakan penyebutnya terlebih dahulu. $$\\frac{a}{b} + \\frac{c}{d} = \\frac{ad + bc}{bd}$$</li>
+                                <li><b>Perkalian:</b> Kalikan pembilang dengan pembilang, dan penyebut dengan penyebut. $$\\frac{a}{b} \\times \\frac{c}{d} = \\frac{ac}{bd}$$</li>
+                                <li><b>Pembagian:</b> Ubah menjadi perkalian dengan kebalikan dari pecahan pembagi. $$\\frac{a}{b} \\div \\frac{c}{d} = \\frac{a}{b} \\times \\frac{d}{c} = \\frac{ad}{bc}$$</li>
+                            </ul>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-lg">
+                            <h4 class="font-bold text-lg mb-2 text-slate-700">Contoh Soal</h4>
+                            <p class="font-medium">Hitunglah hasil dari \\(2\\frac{1}{2} \\div \\frac{3}{4}\\).</p>
+                            <details class="mt-2">
+                                <summary class="cursor-pointer text-sm font-semibold text-indigo-600">Lihat Pembahasan</summary>
+                                <div class="mt-2 p-3 bg-indigo-50 rounded-md text-sm">
+                                    <p><b>Pembahasan:</b> Ubah pecahan campuran menjadi pecahan biasa terlebih dahulu.</p>
+                                    <p class="mt-2">\\(2\\frac{1}{2} = \\frac{5}{2}\\)</p>
+                                    <p>Lakukan operasi pembagian:</p>
+                                    <p class="mt-2">$$\\frac{5}{2} \\div \\frac{3}{4} = \\frac{5}{2} \\times \\frac{4}{3} = \\frac{20}{6} = \\frac{10}{3} \\text{ atau } 3\\frac{1}{3}$$</p>
+                                </div>
+                            </details>
+                        </div>
+                    </div>
+                </div>
+            `,
+            'bab3': `
+                <div class="animate-fade-in">
+                    <h2 class="text-3xl font-bold mb-6 text-slate-800">Bab 3: Rasio</h2>
+                    <div class="space-y-6">
+                        <div class="content-section">
+                            <h3>A. Konsep Rasio dan Proporsi</h3>
+                            <p><b>Rasio</b> adalah perbandingan dua besaran atau lebih. Dapat ditulis sebagai \\(a:b\\) atau \\(\\frac{a}{b}\\). <b>Proporsi</b> adalah persamaan yang menyatakan bahwa dua rasio adalah ekuivalen (sama nilainya).</p>
+                        </div>
+                        <div class="content-section">
+                            <h3>B. Skala</h3>
+                            <p>Skala adalah bentuk khusus dari rasio yang digunakan dalam peta dan denah. Skala \\(1:n\\) berarti 1 unit pada gambar mewakili \\(n\\) unit pada ukuran sebenarnya.</p>
+                        </div>
+                        <div class="content-section">
+                            <h3>C. Laju Perubahan Satuan</h3>
+                            <p>Ini adalah rasio yang membandingkan dua besaran dengan satuan yang berbeda. Contoh yang umum adalah kecepatan (km/jam), kepadatan (orang/km$^2$), dan harga satuan (Rp/kg).</p>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-lg">
+                            <h4 class="font-bold text-lg mb-2 text-slate-700">Contoh Soal</h4>
+                            <p class="font-medium">Perbandingan umur Ayah dan Budi adalah \\(7:2\\). Jika jumlah umur mereka adalah 45 tahun, berapa umur Budi?</p>
+                            <details class="mt-2">
+                                <summary class="cursor-pointer text-sm font-semibold text-indigo-600">Lihat Pembahasan</summary>
+                                <div class="mt-2 p-3 bg-indigo-50 rounded-md text-sm">
+                                    <p><b>Pembahasan:</b> Jumlah perbandingan adalah \\(7+2=9\\).</p>
+                                    <p>Umur Budi dihitung dengan rasio Budi per jumlah rasio, dikalikan total umur.</p>
+                                    <p class="mt-2">$$ \\text{Umur Budi} = \\frac{2}{9} \\times 45 = 2 \\times 5 = 10 \\text{ tahun} $$</p>
+                                </div>
+                            </details>
+                        </div>
+                    </div>
+                </div>
+            `,
+            'bab4': `
+                <div class="animate-fade-in">
+                    <h2 class="text-3xl font-bold mb-6 text-slate-800">Bab 4: Bentuk Aljabar</h2>
+                    <div class="space-y-6">
+                        <div class="content-section">
+                            <h3>A. Unsur-Unsur Bentuk Aljabar</h3>
+                            <p>Bentuk aljabar terdiri dari:</p>
+                            <ul>
+                                <li><b>Variabel:</b> Simbol (huruf) yang mewakili nilai yang tidak diketahui, contoh: \\(x, y\\).</li>
+                                <li><b>Koefisien:</b> Angka di depan variabel, contoh: <b>3</b> dalam \\(3x\\).</li>
+                                <li><b>Konstanta:</b> Suku yang hanya berupa angka, contoh: <b>5</b> dalam \\(2x+5\\).</li>
+                                <li><b>Suku:</b> Bagian yang dipisahkan oleh tanda \\(+\\) atau \\(-\\).</li>
+                            </ul>
+                        </div>
+                        <div class="content-section">
+                            <h3>B. Operasi Aljabar</h3>
+                            <p>Operasi hanya bisa dilakukan pada suku-suku yang sejenis (variabel dan pangkatnya sama).</p>
+                            <p>Contoh: \\(5a + 2b - 3a + b = (5a-3a) + (2b+b) = 2a + 3b\\).</p>
+                            <p>Untuk perkalian, gunakan sifat distributif:</p>
+                            <p>\\(a(b+c) = ab + ac\\)</p>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-lg">
+                            <h4 class="font-bold text-lg mb-2 text-slate-700">Contoh Soal</h4>
+                            <p class="font-medium">Sederhanakan bentuk aljabar \\(3(2x-5) + 4x\\).</p>
+                            <details class="mt-2">
+                                <summary class="cursor-pointer text-sm font-semibold text-indigo-600">Lihat Pembahasan</summary>
+                                <div class="mt-2 p-3 bg-indigo-50 rounded-md text-sm">
+                                    <p><b>Pembahasan:</b> Gunakan sifat distributif terlebih dahulu.</p>
+                                    <p>\\(3(2x-5) = (3 \\times 2x) - (3 \\times 5) = 6x - 15\\)</p>
+                                    <p>Lalu gabungkan dengan sisa suku:</p>
+                                    <p>\\((6x - 15) + 4x = (6x+4x) - 15 = 10x - 15\\)</p>
+                                </div>
+                            </details>
+                        </div>
+                    </div>
+                </div>
+            `,
+            'bab5': `
+                <div class="animate-fade-in">
+                    <h2 class="text-3xl font-bold mb-6 text-slate-800">Bab 5: Kesebangunan</h2>
+                    <div class="space-y-6">
+                        <div class="content-section">
+                            <h3>A. Arti Kesebangunan</h3>
+                            <p>Dua bangun datar dikatakan sebangun jika memiliki bentuk yang sama, meskipun ukurannya berbeda. Syaratnya ada dua:</p>
+                            <ul>
+                                <li>Sudut-sudut yang bersesuaian sama besar.</li>
+                                <li>Perbandingan panjang sisi-sisi yang bersesuaian adalah sama.</li>
+                            </ul>
+                        </div>
+                        <div class="content-section">
+                            <h3>B. Hubungan Antar Sudut</h3>
+                            <p>Jika dua garis sejajar dipotong oleh garis transversal, maka terbentuk pasangan sudut:</p>
+                            <ul>
+                                <li><b>Sehadap & Berseberangan (dalam/luar):</b> Besarnya sama.</li>
+                                <li><b>Bertolak belakang:</b> Besarnya sama.</li>
+                                <li><b>Sepihak (dalam/luar):</b> Jumlahnya \\(180^\\circ\\).</li>
+                            </ul>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-lg">
+                            <h4 class="font-bold text-lg mb-2 text-slate-700">Contoh Soal</h4>
+                            <p class="font-medium">Sebuah tiang bendera setinggi 6 meter memiliki bayangan 4 meter. Di saat yang sama, sebuah pohon di sebelahnya memiliki bayangan 10 meter. Berapa tinggi pohon tersebut?</p>
+                            <details class="mt-2">
+                                <summary class="cursor-pointer text-sm font-semibold text-indigo-600">Lihat Pembahasan</summary>
+                                <div class="mt-2 p-3 bg-indigo-50 rounded-md text-sm">
+                                    <p><b>Pembahasan:</b> Tiang dan bayangannya membentuk segitiga yang sebangun dengan pohon dan bayangannya. Kita gunakan proporsi:</p>
+                                    <p>$$\\frac{\\text{Tinggi Pohon}}{\\text{Tinggi Tiang}} = \\frac{\\text{Bayangan Pohon}}{\\text{Bayangan Tiang}}$$</p>
+                                    <p>$$\\frac{\\text{Tinggi Pohon}}{6} = \\frac{10}{4}$$</p>
+                                    <p>$$\\text{Tinggi Pohon} = \\frac{10}{4} \\times 6 = 2.5 \\times 6 = 15 \\text{ meter}$$</p>
+                                </div>
+                            </details>
+                        </div>
+                    </div>
+                </div>
+            `,
+            'bab6': `
+                <div class="animate-fade-in">
+                    <h2 class="text-3xl font-bold mb-6 text-slate-800">Bab 6: Data dan Diagram</h2>
+                    <div class="space-y-6">
+                        <div class="content-section">
+                            <h3>A. Macam-macam Data</h3>
+                            <p>Data secara umum dibagi menjadi dua:</p>
+                             <ul>
+                                <li><b>Data Kategorik:</b> Data kualitatif yang berupa label atau nama. Contoh: Warna favorit, jenis pekerjaan.</li>
+                                <li><b>Data Numerik:</b> Data kuantitatif yang berupa angka. Contoh: Tinggi badan, nilai ujian.</li>
+                            </ul>
+                        </div>
+                        <div class="content-section">
+                            <h3>B. Diagram dalam Statistika</h3>
+                            <p>Penyajian data bertujuan agar informasi mudah dipahami. Beberapa diagram yang umum digunakan:</p>
+                            <ul>
+                                <li><b>Diagram Batang:</b> Cocok untuk membandingkan frekuensi atau jumlah antar kategori.</li>
+                                <li><b>Diagram Lingkaran:</b> Ideal untuk menunjukkan proporsi atau persentase setiap bagian terhadap keseluruhan.</li>
+                                <li><b>Diagram Garis:</b> Paling baik untuk menunjukkan tren atau perubahan data dari waktu ke waktu.</li>
+                            </ul>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-lg">
+                            <h4 class="font-bold text-lg mb-2 text-slate-700">Contoh Soal</h4>
+                            <p class="font-medium">Dari 80 siswa, 20 di antaranya memilih ekstrakurikuler basket. Jika data ini dibuat diagram lingkaran, berapa besar sudut pusat untuk juring basket?</p>
+                            <details class="mt-2">
+                                <summary class="cursor-pointer text-sm font-semibold text-indigo-600">Lihat Pembahasan</summary>
+                                <div class="mt-2 p-3 bg-indigo-50 rounded-md text-sm">
+                                    <p><b>Pembahasan:</b> Pertama, cari proporsi siswa yang memilih basket.</p>
+                                    <p>Proporsi = $$\\frac{\\text{Jumlah peminat basket}}{\\text{Total siswa}} = \\frac{20}{80} = \\frac{1}{4}$$</p>
+                                    <p>Sudut pusat dihitung dengan mengalikan proporsi dengan \\(360^\\circ\\).</p>
+                                    <p>$$\\text{Sudut Pusat} = \\frac{1}{4} \\times 360^\\circ = 90^\\circ$$</p>
+                                </div>
+                            </details>
+                        </div>
+                    </div>
+                </div>
+            `,
+            'kuis': `
+                <div class="animate-fade-in">
+                    <h2 class="text-3xl font-bold mb-6 text-slate-800">Kuis Interaktif</h2>
+                    <p class="mb-8 text-slate-600">Uji pemahamanmu dengan menjawab pertanyaan-pertanyaan berikut. Soal diacak setiap kali kuis dimulai. Pilihlah jawaban yang paling tepat.</p>
+                    <div id="quiz-container"></div>
+                    <div id="quiz-result" class="mt-6 font-bold text-lg"></div>
+                    <div class="flex space-x-4 mt-6">
+                        <button id="next-quiz-btn" class="w-full text-center py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 hidden" onclick="nextQuestion()">Soal Berikutnya <i class="fa-solid fa-arrow-right ml-2"></i></button>
+                        <button id="restart-quiz-btn" class="w-full text-center py-3 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-all shadow-lg shadow-slate-200 hidden" onclick="startQuiz()">Mulai Ulang Kuis <i class="fa-solid fa-rotate-right ml-2"></i></button>
+                    </div>
+                </div>
+            `
+        };
+
+        const quizData = [
+            // Bab 1
+            {
+                type: 'mc',
+                question: 'Hasil dari \\((-15) + 8\\) adalah...',
+                options: ['-23', '-7', '7', '23'],
+                answer: '-7',
+                explanation: 'Penjumlahan bilangan negatif dengan positif. Karena angka negatif lebih besar, hasilnya negatif. Sama dengan \\(15 - 8 = 7\\), lalu diberi tanda negatif. Jadi \\(-7\\).'
+            },
+            {
+                type: 'mc',
+                question: 'FPB dari 24 dan 36 adalah...',
+                options: ['6', '8', '12', '72'],
+                answer: '12',
+                explanation: 'Faktor dari 24 adalah 1, 2, 3, 4, 6, 8, 12, 24. Faktor dari 36 adalah 1, 2, 3, 4, 6, 9, 12, 18, 36. Faktor persekutuan terbesarnya adalah 12.'
+            },
+            // Bab 2
+            {
+                type: 'mc',
+                question: 'Bentuk desimal dari \\(\\frac{3}{8}\\) adalah...',
+                options: ['0.3', '0.375', '0.83', '3.8'],
+                answer: '0.375',
+                explanation: 'Bentuk desimal didapat dari membagi pembilang dengan penyebut. \\(3\\) dibagi \\(8\\) hasilnya adalah \\(0.375\\).'
+            },
+            {
+                type: 'mc',
+                question: 'Hasil dari \\(\\frac{2}{5} \\times \\frac{3}{4}\\) adalah...',
+                options: ['\\(\\frac{5}{9}\\)', '\\(\\frac{6}{20}\\)', '\\(\\frac{8}{15}\\)', '\\(\\frac{1}{2}\\)'],
+                answer: '\\(\\frac{6}{20}\\)',
+                explanation: 'Perkalian pecahan dilakukan dengan mengalikan pembilang dengan pembilang (\\(2 \\times 3=6\\)) dan penyebut dengan penyebut (\\(5 \\times 4=20\\)). Hasilnya \\(\\frac{6}{20}\\) (atau disederhanakan menjadi \\(\\frac{3}{10}\\)).'
+            },
+            // Bab 3
+            {
+                type: 'mc',
+                question: 'Rasio banyak siswa laki-laki dan perempuan di kelas adalah \\(3:5\\). Jika jumlah siswa perempuan adalah 20, berapakah jumlah siswa laki-laki?',
+                options: ['9', '12', '15', '18'],
+                answer: '12',
+                explanation: 'Rasio \\(3:5\\). Jika 5 bagian adalah 20 siswa, maka 1 bagian adalah \\(20/5 = 4\\) siswa. Jumlah laki-laki (3 bagian) adalah \\(3 \\times 4 = 12\\) siswa.'
+            },
+            {
+                type: 'mc',
+                question: 'Skala peta \\(1:500.000\\). Jika jarak di peta 4 cm, jarak sebenarnya adalah...',
+                options: ['2 km', '20 km', '200 km', '2.000 km'],
+                answer: '20 km',
+                explanation: 'Jarak sebenarnya = \\(4 \\text{ cm} \\times 500.000 = 2.000.000 \\text{ cm}\\). Untuk mengubah ke km, bagi \\(100.000\\). Jadi \\(2.000.000 / 100.000 = 20 \\text{ km}\\).'
+            },
+            // Bab 4
+            {
+                type: 'mc',
+                question: 'Bentuk sederhana dari \\(7a - 2b + 3a + 5b\\) adalah...',
+                options: ['\\(10a + 3b\\)', '\\(10a + 7b\\)', '\\(4a + 3b\\)', '\\(4a - 3b\\)'],
+                answer: '\\(10a + 3b\\)',
+                explanation: 'Kelompokkan suku sejenis: \\((7a + 3a) + (-2b + 5b)\\). Hasilnya adalah \\(10a + 3b\\).'
+            },
+             {
+                type: 'mc',
+                question: 'Pada bentuk aljabar \\(5x - 3\\), yang merupakan koefisien adalah...',
+                options: ['5', 'x', '-3', '5x'],
+                answer: '5',
+                explanation: 'Koefisien adalah angka yang melekat pada variabel. Dalam kasus ini, 5 adalah koefisien dari variabel x.'
+            },
+             {
+                type: 'mc',
+                question: 'Hasil dari \\(4(2x - 3)\\) adalah...',
+                options: ['\\(8x - 3\\)', '\\(8x - 12\\)', '\\(6x - 7\\)', '\\(2x - 12\\)'],
+                answer: '\\(8x - 12\\)',
+                explanation: 'Gunakan sifat distributif. \\((4 \\times 2x) - (4 \\times 3) = 8x - 12\\).'
+            },
+            // Bab 5
+            {
+                type: 'mc',
+                question: 'Dua sudut yang saling berpelurus memiliki jumlah...',
+                options: ['\\(90^\\circ\\)', '\\(180^\\circ\\)', '\\(270^\\circ\\)', '\\(360^\\circ\\)'],
+                answer: '\\(180^\\circ\\)',
+                explanation: 'Sudut berpelurus (suplemen) adalah dua sudut yang jika dijumlahkan akan membentuk sudut lurus, yaitu \\(180^\\circ\\).'
+            },
+            {
+                type: 'mc',
+                question: 'Sebuah segitiga ABC memiliki sisi 3 cm, 4 cm, dan 5 cm. Segitiga PQR sebangun dengannya dan memiliki sisi terpendek 6 cm. Berapa panjang sisi terpanjang segitiga PQR?',
+                options: ['8 cm', '9 cm', '10 cm', '12 cm'],
+                answer: '10 cm',
+                explanation: 'Perbandingan sisi terpendek adalah \\(6 \\text{ cm} / 3 \\text{ cm} = 2\\). Maka semua sisi segitiga PQR adalah 2 kali lipat sisi segitiga ABC. Sisi terpanjang PQR = \\(5 \\text{ cm} \\times 2 = 10 \\text{ cm}\\).'
+            },
+             {
+                type: 'mc',
+                question: 'Jika dua garis sejajar dipotong oleh sebuah garis transversal, maka pasangan sudut dalam berseberangan besarnya...',
+                options: ['Sama besar', 'Berbeda', 'Jumlahnya \\(90^\\circ\\)', 'Jumlahnya \\(180^\\circ\\)'],
+                answer: 'Sama besar',
+                explanation: 'Sesuai dengan sifat-sifat sudut pada garis sejajar, sudut dalam berseberangan selalu memiliki besar yang sama.'
+            },
+            // Bab 6
+            {
+                type: 'mc',
+                question: 'Diagram yang paling cocok untuk menunjukkan persentase bagian dari keseluruhan adalah...',
+                options: ['Diagram Batang', 'Diagram Garis', 'Piktogram', 'Diagram Lingkaran'],
+                answer: 'Diagram Lingkaran',
+                explanation: 'Diagram lingkaran secara visual menunjukkan proporsi atau persentase dari setiap kategori terhadap total keseluruhan, yang direpresentasikan sebagai satu lingkaran penuh (100%).'
+            },
+             {
+                type: 'mc',
+                question: 'Data tentang merek motor yang dimiliki siswa kelas 7 termasuk jenis data...',
+                options: ['Numerik', 'Kuantitatif', 'Kategorik', 'Kontinu'],
+                answer: 'Kategorik',
+                explanation: 'Data merek motor (misalnya Honda, Yamaha, Suzuki) adalah label atau kategori, bukan angka yang dapat diukur atau dihitung. Oleh karena itu, data ini termasuk data kategorik.'
+            },
+             {
+                type: 'mc',
+                question: 'Dalam suatu survei, 25 dari 50 siswa memilih warna biru. Berapa persen siswa yang memilih warna biru?',
+                options: ['\\(25\\%\\)', '\\(50\\%\\)', '\\(75\\%\\)', '\\(100\\%\\)'],
+                answer: '\\(50\\%\\)',
+                explanation: 'Persentase dihitung dengan (Jumlah bagian / Jumlah total) \\(\\times\\) 100\\%. Jadi \\((25/50) \\times 100\\% = 0.5 \\times 100\\% = 50\\%\\).'
+            },
+             {
+                type: 'mc',
+                question: 'Hasil dari \\(5 - (-4) \\times 2\\) adalah...',
+                options: ['2', '13', '-3', '18'],
+                answer: '13',
+                explanation: 'Kerjakan perkalian terlebih dahulu (aturan operasi hitung): \\((-4) \\times 2 = -8\\). Kemudian, \\(5 - (-8)\\) sama dengan \\(5 + 8 = 13\\).'
+            },
+            {
+                type: 'mc',
+                question: 'Suhu \\(-20^\\circ\\text{C} ... -10^\\circ\\text{C}\\). Tanda yang tepat untuk mengisi titik-titik adalah...',
+                options: ['<', '>', '=', '\\(\\le\\)'],
+                answer: '<',
+                explanation: 'Pada garis bilangan, -20 terletak di sebelah kiri -10, yang berarti nilainya lebih kecil.'
+            },
+            {
+                type: 'mc',
+                question: 'KPK dari 12 dan 18 adalah...',
+                options: ['6', '24', '36', '72'],
+                answer: '36',
+                explanation: 'Kelipatan 12: 12, 24, 36, 48... Kelipatan 18: 18, 36, 54... Kelipatan persekutuan terkecil (pertama yang sama) adalah 36.'
+            },
+             {
+                type: 'mc',
+                question: 'Sebuah persegi panjang memiliki panjang \\((2x + 1)\\) cm dan lebar 5 cm. Kelilingnya adalah...',
+                options: ['\\(2x + 6\\) cm', '\\(2x + 11\\) cm', '\\(4x + 12\\) cm', '\\(4x + 2\\) cm'],
+                answer: '\\(4x + 12\\) cm',
+                explanation: 'Keliling = \\(2(p + l) = 2((2x + 1) + 5) = 2(2x + 6) = 4x + 12\\) cm.'
+            },
+            {
+                type: 'mc',
+                question: 'Jika \\(30\\%\\) dari suatu bilangan adalah 15, maka bilangan tersebut adalah...',
+                options: ['30', '45', '50', '60'],
+                answer: '50',
+                explanation: 'Jika \\(0.30 \\times x = 15\\), maka \\(x = 15 / 0.30 = 50\\).'
+            },
+            // Soal Esai
+            {
+                type: 'essay',
+                question: 'Jelaskan dengan bahasamu sendiri, apa perbedaan utama antara bilangan bulat dan bilangan rasional?',
+                explanation: '<b>Jawaban Model:</b> Perbedaan utamanya adalah cakupannya. Bilangan bulat hanya mencakup bilangan penuh (positif, negatif, dan nol) tanpa ada bagian pecahan. Sedangkan bilangan rasional mencakup semua bilangan bulat DAN semua bilangan yang bisa dinyatakan sebagai pecahan (seperti \\(\\frac{1}{2}\\), \\(\\frac{3}{4}\\), atau \\(0.5\\)), di mana pembilang dan penyebutnya adalah bilangan bulat.'
+            },
+            {
+                type: 'essay',
+                question: 'Mengapa saat membagi dua pecahan, kita harus membalik pecahan kedua lalu mengalikannya?',
+                explanation: '<b>Jawaban Model:</b> Membagi dengan suatu bilangan sama artinya dengan mengalikan dengan kebalikannya (resiprokal). Misalnya, membagi dengan 2 sama dengan mengali dengan \\(\\frac{1}{2}\\). Prinsip yang sama berlaku untuk pecahan. Membagi dengan \\(\\frac{c}{d}\\) sama artinya dengan mengalikan dengan kebalikannya, yaitu \\(\\frac{d}{c}\\). Ini adalah cara prosedural yang lebih mudah untuk mendapatkan hasil pembagian.'
+            },
+            {
+                type: 'essay',
+                question: 'Sebuah resep kue memerlukan rasio tepung dan gula \\(5:2\\). Jika kamu hanya punya 100 gram gula, berapa gram tepung yang kamu butuhkan?',
+                explanation: '<b>Jawaban Model:</b> Rasio tepung : gula = \\(5:2\\). Ini berarti untuk setiap 2 bagian gula, dibutuhkan 5 bagian tepung. Jika 2 bagian gula adalah 100 gram, maka 1 bagian adalah \\(100 / 2 = 50\\) gram. Tepung yang dibutuhkan adalah 5 bagian, jadi \\(5 \\times 50 \\text{ gram} = 250 \\text{ gram}\\).'
+            },
+            {
+                type: 'essay',
+                question: 'Jelaskan mengapa \\(3x + 2y\\) tidak bisa disederhanakan menjadi \\(5xy\\).',
+                explanation: '<b>Jawaban Model:</b> Bentuk aljabar \\(3x + 2y\\) tidak bisa disederhanakan karena terdiri dari dua suku yang tidak sejenis. Suku pertama memiliki variabel \\(x\\), dan suku kedua memiliki variabel \\(y\\). Penjumlahan dan pengurangan dalam aljabar hanya bisa dilakukan pada suku-suku yang sejenis (memiliki variabel dan pangkat yang sama persis). Menggabungkannya menjadi \\(5xy\\) adalah operasi yang salah karena itu mencampuradukkan penjumlahan dengan perkalian.'
+            },
+            {
+                type: 'essay',
+                question: 'Kamu ingin menampilkan data tentang genre musik favorit teman-teman sekelasmu. Diagram apa yang paling cocok kamu gunakan, dan mengapa?',
+                explanation: '<b>Jawaban Model:</b> Diagram yang paling cocok adalah <b>Diagram Batang</b> atau <b>Diagram Lingkaran</b>. <br><b>Diagram Batang</b> cocok karena kita bisa dengan mudah membandingkan jumlah siswa yang menyukai setiap genre (misalnya, berapa banyak yang suka Pop vs Rock vs Dangdut). <br><b>Diagram Lingkaran</b> juga cocok jika kita ingin menunjukkan persentase atau proporsi setiap genre dari total seluruh siswa di kelas.'
+            },
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        
+        function escapeLatex(text) {
+             return text.replace(/\\/g, '\\\\');
+        }
+
+        function showContent(id) {
+            const contentArea = document.getElementById('content-area');
+            contentArea.innerHTML = contentData[id];
+            
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('onclick') === `showContent('${id}')`) {
+                    link.classList.add('active');
+                }
+            });
+
+            if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+                MathJax.typesetPromise([contentArea]);
+            }
+
+            if (id === 'kuis') {
+                startQuiz();
+            }
+            toggleMenu(true); // Close menu after selection on mobile
+        }
+        
+        function startQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            quizData.sort(() => Math.random() - 0.5);
+            document.getElementById('quiz-result').innerHTML = '';
+            document.getElementById('next-quiz-btn').classList.add('hidden');
+            document.getElementById('restart-quiz-btn').classList.add('hidden');
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const quizContainer = document.getElementById('quiz-container');
+            if (currentQuestionIndex < quizData.length) {
+                const q = quizData[currentQuestionIndex];
+                let questionHTML = `
+                    <div class="mb-4">
+                        <p class="font-bold text-lg text-slate-800">${currentQuestionIndex + 1}.</p>
+                        <p class="font-medium text-lg mt-1">${q.question}</p>
+                    </div>
+                `;
+
+                if (q.type === 'mc') {
+                    questionHTML += `<div id="options-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">`;
+                    const shuffledOptions = [...q.options].sort(() => Math.random() - 0.5);
+                    shuffledOptions.forEach((option) => {
+                        questionHTML += `
+                            <div class="quiz-option p-4 rounded-lg font-semibold" onclick="checkAnswerMC('${escapeLatex(option)}', this)">
+                                ${option}
+                            </div>`;
+                    });
+                    questionHTML += `</div>`;
+                } else { // essay
+                    questionHTML += `
+                        <div id="options-container">
+                           <textarea id="essay-answer" class="w-full p-3 border-2 border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" rows="4" placeholder="Ketik jawabanmu di sini..."></textarea>
+                           <button class="mt-4 w-full text-center py-3 bg-indigo-500 text-white font-bold rounded-lg hover:bg-indigo-600 transition" onclick="checkAnswerEssay()">Lihat Pembahasan</button>
+                        </div>
+                    `;
+                }
+                
+                questionHTML += `<div id="feedback-container" class="mt-4"></div>`;
+                quizContainer.innerHTML = questionHTML;
+                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+                    MathJax.typesetPromise([quizContainer]);
+                }
+            } else {
+                showFinalScore();
+            }
+        }
+
+        function checkAnswerMC(selectedOption, element) {
+            const q = quizData[currentQuestionIndex];
+            const feedbackContainer = document.getElementById('feedback-container');
+            const optionsContainer = document.getElementById('options-container');
+
+            // Re-escape backslashes from the onclick argument for comparison
+            selectedOption = selectedOption.replace(/\\\\/g, '\\');
+            
+            let feedback = '';
+            if (selectedOption === q.answer) {
+                feedback = '<p class="font-bold text-green-600">Jawaban Benar! <i class="fa-solid fa-check-circle"></i></p>';
+                element.classList.add('correct');
+                score++;
+            } else {
+                feedback = `<p class="font-bold text-red-600">Jawaban Salah. Jawaban yang benar adalah <strong>${q.answer}</strong>. <i class="fa-solid fa-times-circle"></i></p>`;
+                element.classList.add('incorrect');
+            }
+
+            feedback += `<div class="explanation-box mt-4">${q.explanation}</div>`;
+            feedbackContainer.innerHTML = feedback;
+
+            const options = optionsContainer.children;
+            for (let i = 0; i < options.length; i++) {
+                options[i].onclick = null;
+                options[i].style.cursor = 'default';
+                options[i].style.transform = 'none';
+                if (options[i].textContent.trim() === q.answer.trim() && selectedOption !== q.answer) {
+                     options[i].classList.add('correct');
+                }
+            }
+            if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+                MathJax.typesetPromise([feedbackContainer]);
+            }
+            document.getElementById('next-quiz-btn').classList.remove('hidden');
+        }
+
+        function checkAnswerEssay() {
+            const q = quizData[currentQuestionIndex];
+            const feedbackContainer = document.getElementById('feedback-container');
+            const optionsContainer = document.getElementById('options-container');
+
+            feedbackContainer.innerHTML = `<div class="explanation-box">${q.explanation}</div>`;
+            
+            document.getElementById('essay-answer').disabled = true;
+            optionsContainer.querySelector('button').disabled = true;
+            
+            if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+                MathJax.typesetPromise([feedbackContainer]);
+            }
+            document.getElementById('next-quiz-btn').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            document.getElementById('next-quiz-btn').classList.add('hidden');
+            if (currentQuestionIndex < quizData.length) {
+                renderQuestion();
+            } else {
+                showFinalScore();
+            }
+        }
+        
+        function showFinalScore() {
+            const quizContainer = document.getElementById('quiz-container');
+            quizContainer.innerHTML = '';
+            const resultContainer = document.getElementById('quiz-result');
+            const mcCount = quizData.filter(q => q.type === 'mc').length;
+            let percentage = mcCount > 0 ? (score / mcCount) * 100 : 0;
+            resultContainer.innerHTML = `
+                <div class="text-center p-6 bg-indigo-50 rounded-lg">
+                    <i class="fa-solid fa-trophy text-5xl text-amber-400"></i>
+                    <p class="text-2xl font-bold mt-4 text-slate-800">Kuis Selesai!</p>
+                    <p class="text-lg mt-2 text-slate-600">Skor Pilihan Ganda Anda:</p>
+                    <p class="text-4xl font-extrabold text-indigo-600 my-2">${score} / ${mcCount}</p>
+                    <p class="text-lg text-slate-600">(${(percentage.toFixed(0))}%)</p>
+                    <p class="text-sm mt-4 text-slate-500">Anda juga telah melihat pembahasan untuk ${quizData.filter(q => q.type === 'essay').length} soal esai.</p>
+                </div>
+            `;
+            document.getElementById('restart-quiz-btn').classList.remove('hidden');
+        }
+        
+        // Mobile Menu Toggle
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        const menuButton = document.getElementById('menu-button');
+
+        function toggleMenu(forceClose = false) {
+             if (window.innerWidth < 1024) {
+                 if (forceClose || sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                } else {
+                    sidebar.classList.add('open');
+                }
+             }
+        }
+
+        menuButton.addEventListener('click', () => toggleMenu());
+        
+        // Initial content load
+        document.addEventListener('DOMContentLoaded', () => {
+            showContent('bab1');
+        });
+    </script>
+</body>
+</html>
